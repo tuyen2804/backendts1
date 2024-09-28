@@ -15,17 +15,24 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private String jwtSecret="K01hMzD6ZRgh+zAyJ7V6D1I1Rl3M8U2At6M84X+UjK4=";
+    private long iwtExpirationInMs=3600000;
 
-    private long jwtExpirationDate=604800000;
+    private long refreshExpirationInIms=604800000;
+    public String generateAccessToken(Authentication authentication){
+        return generateToken(authentication,iwtExpirationInMs);
+    }
+    public String generateRefreshToken(Authentication authentication){
+        return generateToken(authentication,refreshExpirationInIms);
+    }
 
     // generate JWT token
-    public String generateToken(Authentication authentication){
+    public String generateToken(Authentication authentication, long expirationTime){
 
         String username = authentication.getName();
 
         Date currentDate = new Date();
 
-        Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
+        Date expireDate = new Date(currentDate.getTime() + expirationTime);
 
         String token = Jwts.builder()
                 .subject(username)

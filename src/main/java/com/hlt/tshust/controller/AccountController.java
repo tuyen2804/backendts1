@@ -67,13 +67,14 @@ public class AccountController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // Tạo JWT token
-            String token = jwtTokenProvider.generateToken(authentication);
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+            String refreshToken=jwtTokenProvider.generateRefreshToken(authentication);
 
             // Lấy tài khoản từ email
             Accounts account = accountService.findByUseremail(loginRequest.getEmail());
 
             // Tạo đối tượng phản hồi
-            LoginResponse response = new LoginResponse(true,token, account.getAccountId(), account.getRole());
+            LoginResponse response = new LoginResponse(true,accessToken,refreshToken, account.getAccountId(), account.getRole());
 
             // Trả về JWT token cùng với account_id và role
             return ResponseEntity.ok(response);
@@ -81,7 +82,7 @@ public class AccountController {
         }
         catch (BadCredentialsException ex) {
             // Trả về phản hồi thất bại khi thông tin đăng nhập sai
-            return ResponseEntity.ok(new LoginResponse(false, null, null, null));
+            return ResponseEntity.ok(new LoginResponse(false,null, null, null, null));
         }
     }
 
